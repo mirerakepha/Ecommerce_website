@@ -1,10 +1,154 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+    <style>
+        body{
+        justify-content: center;
+        align-content: center;
+        height: 100vh;
+        display: flex;
+        }
+
+        .register{
+        justify-items: center;
+        padding-top: 100px;
+
+        }
+        .register input{
+        width: 300px;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid black;
+        border-radius: 5px;
+        }
+
+        .reg{
+        background-color: rgb(240, 240, 240);
+        width: 600px;
+        height: 700px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        border-radius: 10px;
+        }
+        .register button{
+        padding: 10px;
+        margin: 10px;
+        width: 100px;
+        height: 50px;
+        border-radius: 15px;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+        text-align: center;
+        }
+        .register button:hover{
+        background-color: rgb(240, 240, 240);
+        }
+        .h2{
+        text-align: center;
+        }
+        .form-group {
+        position: relative;
+        width: fit-content;
+        }
+        .form-group i{
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+        color: #888;
+        pointer-events: none;
+        }
+        .form-group input {
+        padding-left: 40px; /* create space for the icon */
+        }
+        .terms {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* small space between checkbox and label */
+    font-size: 14px;
+  }
+
+  .terms input[type="checkbox"] {
+    margin: 0;
+  }
+
+
+
+
+
+    </style>
+
+
+
+
+
 </head>
 <body>
+
+<div class = "register">
+    <form action="" class="reg">
+        <div>
+            <h2 class="h2">Welcome Back</h2>
+        </div>
+
+
+        <div class="form-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" name="username" placeholder="username" required>
+        </div>
+
+
+
+        <div class="form-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" name="password" placeholder="password" required>
+        </div>
+
+
+
+
+        <button type="submit" class="register-button">Login</button>
+
+        <div class="extra-links">
+             <p>Don't have an account?<a href="signup.html">Sign Up</a></p>
+        </div>
+
+        <div class="login-with">
+            <button class="auth-button">
+                <i class="fab fa-google"></i> Google
+            </button>
+
+
+
+
+
+        </div>
+
+        <!--By creating an account, you agree to the Terms of Service. For more information about GitHub's privacy practices, see the GitHub Privacy Statement. We'll occasionally send you account-related emails. -->
+        <div class="terms">
+            <input id="agree" type="checkbox" >
+            <label for="agree">
+                Remember me
+            </label>
+        </div>
+
+        <p>Dont have an account? <a href="#">sign up</a> </p>
+
+
+
+    </form>
+</div>
 
 </body>
 </html>
