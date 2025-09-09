@@ -1,30 +1,246 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Loomora</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Loomora</title>
+
+
+  {%load static%}
+  <link rel="stylesheet" href="{% static 'assets/css/home.css'%}">
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      position: relative;
+      z-index: 1001;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: #007bff;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .avatar-link img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .login-btn {
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      background: #007bff;
+      color: #fff;
+      border-radius: 6px;
+    }
+    .cart-link {
+      position: relative;
+    }
+    .cart-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: red;
+      color: #fff;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+    }
+    .search-bar {
+      margin: 0 1rem;
+      flex: 1;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    /* Sidebar hidden drawer */
+    aside {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #fafafa;
+      border-right: 1px solid #ddd;
+      padding: 1rem;
+      transition: left 0.3s ease;
+      z-index: 1002;
+    }
+    aside.active {
+      left: 0;
+    }
+    aside h3 {
+      margin-bottom: 0.5rem;
+    }
+    aside ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    aside ul li {
+      margin: 0.5rem 0;
+    }
+    aside ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+
+    /* Overlay for closing */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 1000;
+    }
+    #overlay.active {
+      display: block;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+    }
+    footer {
+      background: #f5f5f5;
+      padding: 1rem;
+      text-align: center;
+      border-top: 1px solid #ddd;
+    }
+
+
+    .menu-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 <header>
-    <!--Logo,,,Delivery to,,,Search bar,,,Cart-->
+  <!-- Logo -->
+  <div class="brand">
+    <span class="dot"></span>
+    <span>Loomora</span>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <form method="get" action="{% url 'search' %}">
+      <input type="text" name="q" placeholder="Search for products...">
+    </form>
+  </div>
+
+  <!-- Right side: menu + profile + cart -->
+  <div class="right">
+    <button class="menu-btn" id="sidebarToggle">☰</button>
+
+    {% if user.is_authenticated %}
+      <a class="avatar-link" href="{% url 'profile' %}">
+        {% if user.profile.image %}
+          <img src="{{ user.profile.image.url }}" alt="{{ user.username }}'s avatar">
+        {% else %}
+          <img src="{% static 'default.jpg' %}" alt="Default avatar">
+        {% endif %}
+      </a>
+    {% else %}
+      <a class="login-btn" href="{% url 'login' %}">Log in</a>
+    {% endif %}
+
+    <a class="cart-link" href="{% url 'cart' %}">
+
+      {% if cart_items_count %}
+        <span class="cart-count">{{ cart_items_count }}</span>
+      {% endif %}
+    </a>
+  </div>
 </header>
 
-<!--
-Sidebar
-==Categories
-    carpets, sweats, officials, pillows, duvets, bags, and more
--->
 
 
+<aside id="sidebar">
+  <h3>Categories</h3>
+  <ul>
+    <li><a href="{% url 'category' 'carpets' %}">Carpets</a></li>
+    <li><a href="{% url 'category' 'sweats' %}">Sweats</a></li>
+    <li><a href="{% url 'category' 'officials' %}">Officials</a></li>
+    <li><a href="{% url 'category' 'pillows' %}">Pillows</a></li>
+    <li><a href="{% url 'category' 'duvets' %}">Duvets</a></li>
+    <li><a href="{% url 'category' 'bags' %}">Bags</a></li>
+    <li><a href="{% url 'categories' %}">More…</a></li>
+  </ul>
+</aside>
+
+<!-- Overlay -->
+<div id="overlay"></div>
+
+
+<main>
+  <h2>Featured Products</h2>
+  <p>Products will be listed here...</p>
+</main>
 
 
 <footer>
-
+  <p>&copy; {{ now.year }} Loomora. All rights reserved.</p>
 </footer>
 
 
+
+
+<script>
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const toggleBtn = document.getElementById("sidebarToggle");
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+</script>
 </body>
 </html>
