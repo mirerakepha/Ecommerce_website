@@ -1,10 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .profile-container {
+            background: #fff;
+            width: 500px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-pic-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-pic-wrapper img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ddd;
+        }
+
+        .country-flag {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: none;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+    </style>
 </head>
 <body>
+
+<div class="profile-container">
+    <div class="profile-pic-wrapper">
+        <img id="profilePic" src="{{ profile.profile_pic.url }}" alt="Profile Picture">
+        <img id="flagIcon" class="country-flag" src="" alt="Country Flag">
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- User fields -->
+
+        {{ user_form.username.label_tag }}
+        {{ user_form.username }}
+
+        {{ user_form.email.label_tag }}
+        {{ user_form.email }}
+
+        <!-- Profile fields -->
+
+        {{ profile_form.location.label_tag }}
+        {{ profile_form.location }}
+
+        {{ profile_form.delivery_center.label_tag }}
+        {{ profile_form.delivery_center }}
+
+        {{ profile_form.country.label_tag }}
+        {{ profile_form.country }}
+
+        {{ profile_form.profile_pic.label_tag }}
+        {{ profile_form.profile_pic }}
+
+        <button type="submit">Edit Profile</button>
+    </form>
+</div>
+
+<script>
+    const countrySelect = document.getElementById('id_country');
+    const flagIcon = document.getElementById('flagIcon');
+
+    if (countrySelect) {
+        countrySelect.addEventListener('change', function() {
+            const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+            const countryCode = selectedOption.value.toLowerCase();
+
+            if (countryCode) {
+                flagIcon.src = `https://flagcdn.com/w40/${countryCode}.png`;
+                flagIcon.style.display = 'block';
+            } else {
+                flagIcon.style.display = 'none';
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

@@ -3,157 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
-
     <style>
-        body{
-        justify-content: center;
-        align-content: center;
-        height: 100vh;
-        display: flex;
+        body {
+            justify-content: center;
+            align-content: center;
+            height: 100vh;
+            display: flex;
         }
-
-        .register{
-        justify-items: center;
-        padding-top: 100px;
-
+        .register {
+            justify-items: center;
+            padding-top: 50px;
         }
-        .register input{
-        width: 300px;
-        margin: 10px;
-        padding: 10px;
-        border: 1px solid black;
-        border-radius: 5px;
+        .reg {
+            background-color: rgb(240, 240, 240);
+            width: 600px;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
         }
-
-        .reg{
-        background-color: rgb(240, 240, 240);
-        width: 600px;
-        height: 700px;
-        align-items: center;
-        justify-content: center;
-        display: flex;
-        flex-direction: column;
-        border-radius: 10px;
+        .reg input {
+            width: 300px;
+            margin: 10px;
+            padding: 10px 10px 10px 40px;
+            border: 1px solid black;
+            border-radius: 5px;
         }
-        .register button{
-        padding: 10px;
-        margin: 10px;
-        width: 350px;
-        height: 50px;
-        border-radius: 15px;
-        align-items: center;
-        justify-content: center;
-        vertical-align: middle;
-        text-align: center;
+        .register button {
+            padding: 10px;
+            margin: 10px;
+            width: 350px;
+            height: 50px;
+            border-radius: 15px;
+            text-align: center;
         }
-        .register button:hover{
-        background-color: rgb(240, 240, 240);
+        .register button:hover {
+            background-color: #ddd;
         }
-        .h2{
-        text-align: center;
+        .h2 {
+            text-align: center;
         }
         .form-group {
-        position: relative;
-        width: fit-content;
+            position: relative;
+            width: fit-content;
         }
-        .form-group i{
-        position: absolute;
-        top: 50%;
-        left: 15px;
-        transform: translateY(-50%);
-        color: #888;
-        pointer-events: none;
-        }
-        .form-group input {
-        padding-left: 40px; /* create space for the icon */
+        .form-group i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #888;
+            pointer-events: none;
         }
         .divider {
-          display: flex;
-          align-items: center;
-          text-align: center;
-          margin: 20px 0;
-          color: #777;
-          font-weight: bold;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #777;
+            font-weight: bold;
         }
-
         .divider::before,
         .divider::after {
-          content: "";
-          flex: 1;
-          border-bottom: 1px solid #ccc;
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ccc;
         }
-
         .divider:not(:empty)::before {
-          margin-right: 10px;
+            margin-right: 10px;
         }
-
         .divider:not(:empty)::after {
-          margin-left: 10px;
+            margin-left: 10px;
         }
-
         .terms {
-    display: flex;
-    align-items: center;
-    gap: 5px; /* small space between checkbox and label */
-    font-size: 14px;
-  }
-
-  .terms input[type="checkbox"] {
-    margin: 0;
-  }
-
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
     </style>
-
-
-
-
-
-
-
 </head>
 <body>
-
-
-<div class = "register">
+<div class="register">
     <h2>Loomora</h2>
 
-    <form action="" class="reg">
+    <form method="post" class="reg">
+        {% csrf_token %}
         <div>
             <h2 class="h2">Sign Up</h2>
         </div>
 
-
+        <!-- Username -->
         <div class="form-group">
             <i class="fas fa-user"></i>
-            <input type="text" id="username" name="username" placeholder="username" required>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="error">{{ form.username.errors }}</div>
+            {% endif %}
         </div>
 
+        <!-- Email -->
         <div class="form-group">
             <i class="fas fa-envelope"></i>
-            <input type="email" id="email" name="email" placeholder="email" required>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="error">{{ form.email.errors }}</div>
+            {% endif %}
         </div>
 
+        <!-- Password -->
         <div class="form-group">
             <i class="fas fa-lock"></i>
-            <input type="password" id="password" name="password" placeholder="password" required>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div class="error">{{ form.password1.errors }}</div>
+            {% endif %}
         </div>
 
+        <!-- Confirm Password -->
         <div class="form-group">
             <i class="fas fa-lock"></i>
-            <input type="password" id="cpassword" name="password" placeholder="confirm password" required>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="error">{{ form.password2.errors }}</div>
+            {% endif %}
         </div>
-
 
         <button type="submit" class="register-button">Register</button>
 
         <div class="extra-links">
-             <p>Already have an account?<a href="login.html">Sign in</a></p>
+            <p>Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
         </div>
 
         <div class="divider">
@@ -161,24 +151,17 @@
         </div>
 
         <div class="login-with">
-            <button class="auth-button">
+            <button type="button" class="auth-button">
                 <i class="fab fa-google"></i> Login with Google
             </button>
-
-
-
-
         </div>
 
-        <!--By creating an account, you agree to the Terms of Service. For more information about GitHub's privacy practices, see the GitHub Privacy Statement. We'll occasionally send you account-related emails. -->
         <div class="terms">
-            <p>By continuing you agree with Loomora's <a href="#">terms & conditions</a> and <a href="#">Privacy notice</a></p>
+            <p>By continuing you agree with Loomora's
+            <a href="#">terms & conditions</a> and
+            <a href="#">Privacy notice</a></p>
         </div>
-
-
     </form>
 </div>
-
-
 </body>
 </html>
