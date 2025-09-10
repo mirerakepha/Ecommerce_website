@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
 
 from shopapp import views
 
@@ -32,4 +33,5 @@ urlpatterns = [
     path("profile/", views.profile, name='profile'),
     path("product_details/", views.product_details, name='product_details'),
     path("settings/", views.settings, name='settings'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout')
 ]

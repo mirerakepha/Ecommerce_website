@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Profile
 from .forms import UserForm, ProfileForm
+from django.views.decorators.http import require_POST
+from django.contrib.auth import logout
 from django.http import HttpResponse
 from django.views.decorators.csrf import requires_csrf_token
 
@@ -90,3 +92,10 @@ def product_details(request):
 @login_required
 def settings(request):
     return render(request, 'settings.html')
+
+
+@require_POST
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')

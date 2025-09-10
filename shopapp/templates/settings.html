@@ -1,10 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Settings</title>
+  <style>
+    :root {
+      --bg-light: #f9f9f9;
+      --text-light: #333;
+      --bg-dark: #1e1e1e;
+      --text-dark: #f1f1f1;
+    }
+    body { margin:0; font-family: Arial, sans-serif; transition: background .25s, color .25s; }
+    body.light { background: var(--bg-light); color: var(--text-light); }
+    body.dark  { background: var(--bg-dark);  color: var(--text-dark);  }
 
+    .container { max-width:520px; margin:48px auto; padding:24px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.08); background:inherit; }
+    h2 { text-align:center; margin:0 0 18px; }
+
+    .form-group { margin-bottom:12px; }
+    label { display:block; margin-bottom:8px; font-weight:600; }
+
+
+    .switch {
+      display:inline-flex; align-items:center; gap:12px;
+    }
+    .switch input[type="checkbox"] { appearance:none; width:44px; height:24px; background:#cfcfcf; border-radius:18px; position:relative; outline:none; cursor:pointer; transition:background .2s; }
+    .switch input[type="checkbox"]::after {
+      content:""; width:18px; height:18px; background:#fff; border-radius:50%; position:absolute; top:3px; left:3px; transition:transform .2s;
+      box-shadow:0 1px 3px rgba(0,0,0,.2);
+    }
+    .switch input[type="checkbox"]:checked { background:#4a90e2; }
+    .switch input[type="checkbox"]:checked::after { transform: translateX(20px); }
+
+    button, .link-btn {
+      width:100%; padding:10px; border-radius:8px; border:none; font-weight:600; cursor:pointer; margin-top:8px;
+    }
+    .link-btn { text-decoration:none; display:inline-block; text-align:center; background:#2ecc71; color:white; }
+    .btn-logout { background:#e74c3c; color:white; }
+  </style>
+</head>
+<body class="light">
+  <div class="container">
+    <h2>Settings</h2>
+
+    <!-- Theme-->
+    <div class="form-group">
+      <label for="darkMode">Theme</label>
+      <div class="switch">
+        <label>
+          <input id="darkMode" type="checkbox" aria-label="Toggle dark mode">
+        </label>
+        <span id="themeStatus">Light mode</span>
+      </div>
+    </div>
+
+    <!-- Switch account -->
+    <div class="form-group">
+      <label>Account</label>
+      <a class="link-btn" href="{% url 'login' %}">Switch Account</a>
+    </div>
+
+    <!-- Logout: form posts to logout URL (protects against CSRF if you use POST) -->
+    <div class="form-group">
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-logout">Logout</button>
+      </form>
+    </div>
+  </div>
+
+<script>
+  // Theme toggle logic (uses checkbox with id="darkMode")
+  const chk = document.getElementById('darkMode');
+  const status = document.getElementById('themeStatus');
+
+  // load saved theme
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.body.className = 'dark';
+    chk.checked = true;
+    status.textContent = 'Dark mode';
+  } else {
+    document.body.className = 'light';
+    chk.checked = false;
+    status.textContent = 'Light mode';
+  }
+
+  chk.addEventListener('change', () => {
+    if (chk.checked) {
+      document.body.className = 'dark';
+      localStorage.setItem('theme', 'dark');
+      status.textContent = 'Dark mode';
+    } else {
+      document.body.className = 'light';
+      localStorage.setItem('theme', 'light');
+      status.textContent = 'Light mode';
+    }
+  });
+</script>
 </body>
 </html>
