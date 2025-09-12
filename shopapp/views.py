@@ -94,6 +94,11 @@ def settings(request):
     return render(request, 'settings.html')
 
 
+def search_results(request):
+    query = request.GET.get("q")
+    return render(request, 'search.html', { 'query': query})
+
+
 @require_POST
 @login_required
 def logout_view(request):

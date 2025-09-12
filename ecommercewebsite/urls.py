@@ -33,5 +33,6 @@ urlpatterns = [
     path("profile/", views.profile, name='profile'),
     path("product_details/", views.product_details, name='product_details'),
     path("settings/", views.settings, name='settings'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout')
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('search/', views.search_results, name='home'),
 ]
