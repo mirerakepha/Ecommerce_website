@@ -31,7 +31,7 @@ class LoginForm(AuthenticationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ["profile_pic", "location", "delivery_center", "country"]
+        fields = ["profile_pic", "location", "address", "country"]
         widgets = {
             'location': forms.TextInput(attrs={'id': 'location', 'class': 'form-control'}),
             'delivery_center': forms.TextInput(attrs={'id': 'delivery_center'}),

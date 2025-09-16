@@ -1,41 +1,51 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
-from .models import Profile
-from .forms import UserForm, ProfileForm
 from django.views.decorators.http import require_POST
-from django.contrib.auth import logout
-from django.http import HttpResponse
-from django.views.decorators.csrf import requires_csrf_token
 
-from .forms import SignupForm, LoginForm
+from .models import Profile, Product
+
+from .forms import UserForm, ProfileForm, SignupForm, LoginForm
+
+
 
 
 def home(request):
-    return render(request, 'home.html')
+    products = Product.objects.all()
+    return render(request, 'home.html', {'products': products})
 
 
 def signup(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
-        else:
-            form = SignupForm()
-            return render(request, 'signup.html', {'form': form})
-
+            user = form.save()
+            login(request, user)  # auto login after signup
+            return redirect("home")
+    else:
+        form = SignupForm()
+    return render(request, "signup.html", {"form": form})
 
 
 def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
+    if request.method == "POST":
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login_view(request, user)
-            return redirect('home')
-        else:
-            form = LoginForm()
-        return render(request, 'login.html', {'form': form})
+            login(request, user)
+            return redirect("home")
+    else:
+        form = LoginForm()
+    return render(request, "login.html", {"form": form})
+
+
+@require_POST
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+
 
 
 @login_required
@@ -84,6 +94,7 @@ def profile(request):
         "profile": profile,
     })
 
+
 @login_required
 def product_details(request):
     return render(request, 'product_details.html')
@@ -94,13 +105,17 @@ def settings(request):
     return render(request, 'settings.html')
 
 
+
+
 def search_results(request):
     query = request.GET.get("q")
-    return render(request, 'search.html', { 'query': query})
+    return render(request, "search_result .html", {"query": query})
 
 
-@require_POST
-@login_required
-def logout_view(request):
-    logout(request)
-    return redirect('login')
+def category(request, category_name):
+    return render(request, "category.html", {"category_name": category_name})
+
+
+def categories(request):
+    all_categories = ["carpets", "sweats", "officials", "pillows", "duvets", "bags"]
+    return render(request, "categories.html", {"categories": all_categories})
