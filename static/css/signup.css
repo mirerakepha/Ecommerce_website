@@ -1,0 +1,85 @@
+
+        body {
+            justify-content: center;
+            align-content: center;
+            height: 100vh;
+            display: flex;
+        }
+        .register {
+            justify-items: center;
+            padding-top: 50px;
+        }
+        .reg {
+            background-color: rgb(240, 240, 240);
+            width: 600px;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+        }
+        .reg input {
+            width: 300px;
+            margin: 10px;
+            padding: 10px 10px 10px 40px;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+        .register button {
+            padding: 10px;
+            margin: 10px;
+            width: 350px;
+            height: 50px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .register button:hover {
+            background-color: #ddd;
+        }
+        .h2 {
+            text-align: center;
+        }
+        .form-group {
+            position: relative;
+            width: fit-content;
+        }
+        .form-group i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #888;
+            pointer-events: none;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #777;
+            font-weight: bold;
+        }
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ccc;
+        }
+        .divider:not(:empty)::before {
+            margin-right: 10px;
+        }
+        .divider:not(:empty)::after {
+            margin-left: 10px;
+        }
+        .terms {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-left: 5px;
+        }

@@ -1,5 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
@@ -16,33 +17,45 @@ def home(request):
 
 
 def signup(request):
+    form = SignupForm(request.POST or None)
     if request.method == "POST":
         form = SignupForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
             login(request, user)  # auto login after signup
+            messages.success(request, 'You are now registered')
             return redirect("home")
+        else:
+            messages.error(request, 'problem occurred')
+            return redirect("signup")
     else:
-        form = SignupForm()
-    return render(request, "signup.html", {"form": form})
+        return render(request, "signup.html", {'form': form})
 
 
 def login_user(request):
     if request.method == "POST":
-        form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             login(request, user)
+            messages.success(request, "You are now logged in.")
             return redirect("home")
+        else:
+            messages.error(request, "Invalid username or password.")
+            return redirect("login")
     else:
-        form = LoginForm()
-    return render(request, "login.html", {"form": form})
+        return render(request, "login.html", {'form': LoginForm()})
 
 
 @require_POST
 @login_required
 def logout_user(request):
     logout(request)
+    messages.success(request, "You have been logged out.")
     return redirect("home")
 
 

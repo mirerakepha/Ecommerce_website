@@ -7,6 +7,9 @@ from .models import Profile
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    username = forms.CharField(required=True)
+    password1 = forms.CharField(widget=forms.PasswordInput())
+    password2 = forms.CharField(widget=forms.PasswordInput())
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
@@ -34,7 +37,7 @@ class ProfileForm(forms.ModelForm):
         fields = ["profile_pic", "location", "address", "country"]
         widgets = {
             'location': forms.TextInput(attrs={'id': 'location', 'class': 'form-control'}),
-            'delivery_center': forms.TextInput(attrs={'id': 'delivery_center'}),
+            'address': forms.TextInput(attrs={'id': 'address'}),
         }
 
 class UserForm(forms.ModelForm):
