@@ -28,6 +28,10 @@ class Product(models.Model):
          category = models.ForeignKey(Category, on_delete=models.CASCADE)
          description = models.TextField(max_length=250, default='', blank=True, null=True)
          image = models.ImageField(upload_to="products")
+         is_available = models.BooleanField(default=True)
+         is_deleted = models.BooleanField(default=False)
+         on_sale = models.BooleanField(default=False)
+         sale_price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
          def __str__(self):
             return f"{self.name}"
 

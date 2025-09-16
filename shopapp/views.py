@@ -27,7 +27,7 @@ def signup(request):
     return render(request, "signup.html", {"form": form})
 
 
-def login_view(request):
+def login_user(request):
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
@@ -41,9 +41,9 @@ def login_view(request):
 
 @require_POST
 @login_required
-def logout_view(request):
+def logout_user(request):
     logout(request)
-    return redirect("login")
+    return redirect("home")
 
 
 
@@ -109,7 +109,7 @@ def settings(request):
 
 def search_results(request):
     query = request.GET.get("q")
-    return render(request, "search_result .html", {"query": query})
+    return render(request, "search_result.html", {"query": query})
 
 
 def category(request, category_name):
@@ -119,3 +119,7 @@ def category(request, category_name):
 def categories(request):
     all_categories = ["carpets", "sweats", "officials", "pillows", "duvets", "bags"]
     return render(request, "categories.html", {"categories": all_categories})
+
+
+def about(request):
+    return render(request, "about.html")

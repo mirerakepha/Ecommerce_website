@@ -1,4 +1,5 @@
 <!doctype html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,133 +7,54 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-    <style>
-        body{
-        justify-content: center;
-        align-content: center;
-        height: 100vh;
-        display: flex;
-        }
-
-        .register{
-        justify-items: center;
-        padding-top: 100px;
-
-        }
-        .register input{
-        width: 300px;
-        margin: 10px;
-        padding: 10px;
-        border: 1px solid black;
-        border-radius: 5px;
-        }
-
-        .reg{
-        background-color: rgb(240, 240, 240);
-        width: 600px;
-        height: 700px;
-        align-items: center;
-        justify-content: center;
-        display: flex;
-        flex-direction: column;
-        border-radius: 10px;
-        }
-        .register button{
-        padding: 10px;
-        margin: 10px;
-        width: 100px;
-        height: 50px;
-        border-radius: 15px;
-        align-items: center;
-        justify-content: center;
-        vertical-align: middle;
-        text-align: center;
-        }
-        .register button:hover{
-        background-color: rgb(240, 240, 240);
-        }
-        .h2{
-        text-align: center;
-        }
-        .form-group {
-        position: relative;
-        width: fit-content;
-        }
-        .form-group i{
-        position: absolute;
-        top: 50%;
-        left: 15px;
-        transform: translateY(-50%);
-        color: #888;
-        pointer-events: none;
-        }
-        .form-group input {
-        padding-left: 40px; /* create space for the icon */
-        }
-        .terms {
-    display: flex;
-    align-items: center;
-    gap: 5px; /* small space between checkbox and label */
-    font-size: 14px;
-  }
-
-  .terms input[type="checkbox"] {
-    margin: 0;
-  }
-
-
-
-
-
-    </style>
-
-
+    <link href="{% static 'css/login.css' %}" rel="stylesheet" />
 
 
 
 </head>
 <body>
 
-<div class = "register">
+<div class="register">
     <form method="post" class="reg">
-    {% csrf_token %}
-    <div>
-        <h2 class="h2">Welcome Back</h2>
-    </div>
+        {% csrf_token %}
+        <div>
+            <h2 class="h2">Welcome Back</h2>
+        </div>
 
-    <!-- Username -->
-    <div class="form-group">
-        <i class="fas fa-user"></i>
-        {{ form.username }}
-        {% if form.username.errors %}
-            <div class="error">{{ form.username.errors }}</div>
+        <!-- Username -->
+        <div class="form-group">
+            <i class="fas fa-user"></i>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="error">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <i class="fas fa-lock"></i>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="error">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="register-button">Login</button>
+
+        {% if form.non_field_errors %}
+            <div class="error">{{ form.non_field_errors }}</div>
         {% endif %}
-    </div>
 
-    <!-- Password -->
-    <div class="form-group">
-        <i class="fas fa-lock"></i>
-        {{ form.password }}
-        {% if form.password.errors %}
-            <div class="error">{{ form.password.errors }}</div>
-        {% endif %}
-    </div>
-
-    <button type="submit" class="register-button">Login</button>
-
-    {% if form.non_field_errors %}
-        <div class="error">{{ form.non_field_errors }}</div>
-    {% endif %}
-
-    <div class="extra-links">
-        <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
-    </div>
-</form>
-
+        <div class="extra-links">
+            <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
+        </div>
+    </form>
 </div>
+
+<script src="{% static 'js/login.js' %}"></script>
 
 </body>
 </html>
