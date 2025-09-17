@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
     # Your custom app
     'shopapp',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                #add a template for the cart context
+                'cart.context_processors.cart',#keeps track of new users session and remembers old users
             ],
         },
     },

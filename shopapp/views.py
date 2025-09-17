@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from .models import Profile, Product
+from .models import Profile, Product, Category, Customer
 
 from .forms import UserForm, ProfileForm, SignupForm, LoginForm
 
@@ -61,9 +61,6 @@ def logout_user(request):
 
 
 
-@login_required
-def cart(request):
-    return render(request, 'cart.html')
 
 
 @login_required
@@ -109,8 +106,9 @@ def profile(request):
 
 
 @login_required
-def product_details(request):
-    return render(request, 'product_details.html')
+def product_details(request, pk):
+    product = Product.objects.get(id=pk)
+    return render(request, 'product_details.html', {'product': product})
 
 
 @login_required
@@ -129,10 +127,15 @@ def category(request, category_name):
     return render(request, "category.html", {"category_name": category_name})
 
 
-def categories(request):
-    all_categories = ["carpets", "sweats", "officials", "pillows", "duvets", "bags"]
-    return render(request, "categories.html", {"categories": all_categories})
-
+def categories(request, category_name):
+    category_name = category_name.replace('-', ' ')
+    try:
+        category = Category.objects.get(name__iexact=category_name)
+        products = Product.objects.filter(category=category)
+        return render(request, 'category.html', {'products': products, 'category': category})
+    except:
+        messages.error(request, 'Category not found')
+        return redirect('categories', category_name=category_name)
 
 def about(request):
     return render(request, "about.html")
