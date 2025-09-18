@@ -44,6 +44,6 @@ urlpatterns = [
     path("settings/", views.settings, name='settings'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('search/', views.search_results, name='search_results'),
+    path("category_summary/", views.category_summary, name="category_summary"),
     path("category/<str:category_name>/", views.categories, name="category"),
-    path("categories/", views.categories, name="categories"),
 ]

@@ -122,10 +122,6 @@ def search_results(request):
     return render(request, "search_result.html", {"query": query})
 
 
-def category(request, category_name):
-    return render(request, "category.html", {"category_name": category_name})
-
-
 def categories(request, category_name):
     category_name = category_name.replace('-', ' ')
     try:
@@ -135,6 +131,11 @@ def categories(request, category_name):
     except:
         messages.error(request, 'Category not found')
         return redirect('categories', category_name=category_name)
+
+
+def category_summary(request):
+    categories = Category.objects.all()
+    return render(request, 'category_summary.html', {"categories": categories})
 
 def about(request):
     return render(request, "about.html")
