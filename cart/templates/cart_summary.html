@@ -12,12 +12,110 @@
                 </div>
             </div>
         </header>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-{% endblock %}
 
+    <div class="container">
+    {% if cart_products %}
+
+    {% for product in cart_products %}
+        <div class="card mb-3" >
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+
+                  <h5 class="card-title">{{ product.name }}</h5>
+                  <p class="card-text">{{ product.description}}</p>
+                  {% if product.on_sale %}
+                      <strike>${{ product.price }}</strike>
+                      &nbsp;
+                      ${{ product.price }}
+                  {% else %}
+                      ${{ product.price }}
+                  {% endif %}
+                    <div class="row justify-content-center">
+                        <div class="col-md-2">Quantity</div>
+                        <div class="col-md-2">
+                            <select class="form-select form-select-sm" id="select{{product.id}}">
+                                                                          <!--takes the quantity selected in the dropdown to printout the total-->
+                                    <!--looping in a dictionary-->
+                                    {% for key, value in quantities.items %}
+                                        {% if key == product.id|stringformat:"s" %}
+                                            <option selected>{{ value }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+
+
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                            </select>
+                        </div>
+                    </div>
+          
+
+
+
+                  <br><br><br>
+                  <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+                  <br><br><br>
+                  <button type="button" data-index="{{product.id}}" class="btn btn-secondary update-cart">Update</button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+    {% endfor %}
+        {% else %}
+        <br><br><br><br>
+        <div class="alert alert-primary d-flex align-items-center" role="alert">
+
+          <div>
+            cart is empty
+          </div>
+        </div>
+
+    {% endif %}
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+<script>
+    //in javascript you look up classes using . and ids using #
+     $(document).on('click', '.update-cart', function(e){
+        e.preventDefault();
+        //grab the product id
+         var productid = $(this).data('index');
+
+        $.ajax({ //sends to the backend without refreshing the webpage
+            type: 'POST',
+            url: '{% url 'cart_update' %}',
+            data: {
+                product_id: $(this).data('index'),
+                product_qty: $('#select' + productid + ' option:selected').text(),//when you select the number it is pushed to the cart_add so you can adjust it in the cart views.py
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json){
+               //console.log(json)
+               // document.getElementById("cart_quantity").textContent = json.qty
+                location.reload()
+            },
+            error:function (xhr, errmsg, err){
+
+            }
+        });
+    })
+</script>
+{% endblock %}
