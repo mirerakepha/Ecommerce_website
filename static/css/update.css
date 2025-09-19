@@ -1,0 +1,43 @@
+
+
+/* Labels */
+form label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+    color: #555;
+}
+
+/* Input fields */
+input.form-control {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s;
+}
+
+input.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Error messages */
+.text-danger.small {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #e74c3c !important;
+}
+
+/* Submit button */
+button.btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+}

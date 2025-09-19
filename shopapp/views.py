@@ -6,9 +6,9 @@ from django.views.decorators.http import require_POST
 
 from .models import Profile, Product, Category, Customer
 
-from .forms import UserForm, ProfileForm, SignupForm, LoginForm
-
-
+from .forms import UserForm, ProfileForm, SignupForm, LoginForm, UpdateUserForm, ChangePasswordForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
 
 def home(request):
@@ -22,41 +22,56 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
             user = authenticate(username=username, password=password)
             login(request, user)  # auto login after signup
             messages.success(request, 'You are now registered')
-            return redirect("home")
+            return redirect('home')
         else:
-            messages.error(request, 'problem occurred')
-            return redirect("signup")
+            messages.error(request, 'Problem occurred')
+            return redirect('signup')
     else:
         return render(request, "signup.html", {'form': form})
 
 
 def login_user(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+        username = request.POST['username']
+        password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             messages.success(request, "You are now logged in.")
-            return redirect("home")
+            return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")
-            return redirect("login")
+            return redirect('login')
     else:
         return render(request, "login.html", {'form': LoginForm()})
 
-
-@require_POST
 @login_required
 def logout_user(request):
     logout(request)
     messages.success(request, "You have been logged out.")
-    return redirect("home")
+    return redirect('home')
+
+@login_required
+def update_user(request):
+    if request.user.is_authenticated:
+        current_user = User.objects.get(id=request.user.id)
+        user_form = UpdateUserForm(request.POST or None, instance=current_user)
+
+        if user_form.is_valid():
+            user_form.save()
+            login(request, current_user)
+            messages.success(request, "Profile has been updated.")
+            return redirect('home')
+        return render(request, 'update_user.html', {'user_form': user_form})
+    else:
+        messages.error(request, "You are not logged in.")
+        return redirect('login')
 
 
 
@@ -79,31 +94,17 @@ def payment(request):
 
 
 @login_required
-def profile(request):
-    user = request.user
-    try:
-        profile = user.profile
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user=user)
-
+def update_user(request):
     if request.method == "POST":
-        user_form = UserForm(request.POST, instance=user)
-        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            return redirect("profile")
+        form = UpdateUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect("home")
     else:
-        user_form = UserForm(instance=user)
-        profile_form = ProfileForm(instance=profile)
+        form = UpdateUserForm(instance=request.user)
 
-    return render(request, "profile.html", {
-        "user_form": user_form,
-        "profile_form": profile_form,
-        "profile": profile,
-    })
-
+    return render(request, "update_user.html", {"form": form})
 
 def product_details(request, pk):
     product = Product.objects.get(id=pk)
@@ -113,6 +114,27 @@ def product_details(request, pk):
 @login_required
 def settings(request):
     return render(request, 'settings.html')
+
+
+def update_password(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        if request.method == "POST":
+            form = PasswordChangeForm(current_user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Your password was successfully updated!")
+                login(request, current_user)
+                return redirect('update_user')
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, "Ooops! seems there was an error")
+        else:
+            form = ChangePasswordForm(current_user)
+            return render(request, 'update_password.html', {'form': form})
+    else:
+        messages.success(request, "You are not logged in.")
+        return redirect('home')
 
 
 
