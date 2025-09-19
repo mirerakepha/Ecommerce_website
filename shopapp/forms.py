@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import password_validators_help_text_html
 
+from . import models
 from .models import Profile
 
 from django import forms
@@ -112,7 +113,7 @@ class ChangePasswordForm(SetPasswordForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ["profile_pic", "location", "address", "country"]
+        fields = ["profile_pic", "phone_number", "address", "country"]
         widgets = {
             'location': forms.TextInput(attrs={'id': 'location', 'class': 'form-control'}),
             'address': forms.TextInput(attrs={'id': 'address'}),
@@ -122,3 +123,15 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username", "email", "password"]
+
+class UserInfoForm(forms.ModelForm):
+    profile_pic = forms.ImageField(label="", required=False)
+    phone_number = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Phone'}),required=False)
+    address = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Address'}),required=False)
+    country = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Country'}),required=False)
+    city = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'City'}),required=False)
+    state = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'State'}),required=False)
+    zipcode = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'ZipCode'}),required=False)
+    class Meta:
+        model = Profile
+        fields = ["profile_pic", "phone_number", "address", "country"]

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/update.css' %}">
+
+    <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Update User Profile </h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Stay warm and cozy</p>
+                </div>
+            </div>
+        </header>
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">Update Profile info</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    <div class="text-danger small">{{ field.errors }}</div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100">Update</button>
+            <br><br>
+            <a href="{% url 'update_password' %}">Update password?</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

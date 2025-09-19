@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 
 from .models import Profile, Product, Category, Customer
 
-from .forms import UserForm, ProfileForm, SignupForm, LoginForm, UpdateUserForm, ChangePasswordForm
+from .forms import UserForm, ProfileForm, SignupForm, LoginForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
@@ -23,12 +23,12 @@ def signup(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            password = form.cleaned_data['password1']
 
             user = authenticate(username=username, password=password)
             login(request, user)  # auto login after signup
-            messages.success(request, 'You are now registered')
-            return redirect('home')
+            messages.success(request, 'Account created successfully, fill the extra info')
+            return redirect('update_info')
         else:
             messages.error(request, 'Problem occurred')
             return redirect('signup')
@@ -69,6 +69,25 @@ def update_user(request):
             messages.success(request, "Profile has been updated.")
             return redirect('home')
         return render(request, 'update_user.html', {'user_form': user_form})
+    else:
+        messages.error(request, "You are not logged in.")
+        return redirect('login')
+
+
+
+
+
+def update_info(request):
+    if request.user.is_authenticated:
+        current_user = Profile.objects.get(user__id=request.user.id)
+        form = UserInfoForm(request.POST or None, instance=current_user)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Your Info has been updated.")
+            return redirect('home')
+        return render(request, 'update_info.html', {'form': form})
     else:
         messages.error(request, "You are not logged in.")
         return redirect('login')
