@@ -44,7 +44,7 @@ urlpatterns = [
     path("update_info/", views.update_info, name='update_info'),
     path("product_details/<int:pk>", views.product_details, name='product_details'),
     path("settings/", views.settings, name='settings'),
-    path('search/', views.search_results, name='search_results'),
+    path('search/', views.search, name='search'),
     path("category_summary/", views.category_summary, name="category_summary"),
     path("category/<str:category_name>/", views.categories, name="category"),
 ]

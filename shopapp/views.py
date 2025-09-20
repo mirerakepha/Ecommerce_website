@@ -15,6 +15,22 @@ def home(request):
     products = Product.objects.all()
     return render(request, 'home.html', {'products': products})
 
+def search(request):
+    if request.method == "POST":
+        searched = request.POST.get('searched', '').strip()
+        if searched:
+            results = Product.objects.filter(name__icontains=searched)
+            if results.exists():
+                return render(request, 'search.html', {'results': results, 'searched': searched})
+            else:
+                messages.error(request, 'Product not found.')
+                return render(request, 'search.html', {'results': [], 'searched': searched})
+        else:
+            messages.warning(request, "Please enter a search term.")
+            return render(request, 'search.html', {})
+    else:
+        return render(request, 'search.html', {})
+
 
 def signup(request):
     form = SignupForm(request.POST or None)
@@ -77,21 +93,21 @@ def update_user(request):
 
 
 
+@login_required
 def update_info(request):
-    if request.user.is_authenticated:
-        current_user = Profile.objects.get(user__id=request.user.id)
-        form = UserInfoForm(request.POST or None, instance=current_user)
+    # Ensure profile exists
+    current_user, created = Profile.objects.get_or_create(user=request.user)
 
+    if request.method == "POST":
+        form = UserInfoForm(request.POST, request.FILES, instance=current_user)
         if form.is_valid():
             form.save()
-
             messages.success(request, "Your Info has been updated.")
             return redirect('home')
-        return render(request, 'update_info.html', {'form': form})
     else:
-        messages.error(request, "You are not logged in.")
-        return redirect('login')
+        form = UserInfoForm(instance=current_user)
 
+    return render(request, 'update_info.html', {'form': form})
 
 
 

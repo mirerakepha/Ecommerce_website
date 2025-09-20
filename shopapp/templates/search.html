@@ -1,0 +1,104 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Search Products</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Find what you're looking for</p>
+                </div>
+            </div>
+        </header>
+
+    <div class="container">
+    <div class="row">
+        <center>
+            <div class="col-10">
+                <div class="card">
+                      <div class="card-header">
+                        Search Products
+                      </div>
+                      <div class="card-body">
+                          <form action="{% url 'search' %}" method="POST">
+                              {% csrf_token %}
+                              <div class="mb-3">
+                              <input type="text" class="form-control" placeholder="search for products" name="searched">
+                              </div>
+                            <button type="submit" class="btn btn-secondary">Search Products</button>
+                          </form>
+                      </div>
+
+                    </div>
+                {% if searched %}
+    {% for product in searched %}
+        <div class="col mb-5">
+            <div class="card h-100">
+
+                {% if product.on_sale %}
+                    <!-- SALE badge -->
+                    <div class="badge text-white position-absolute" style="background-color: orange; top: 0.5rem; right: 0.5rem">
+                        SALE
+                    </div>
+                {% endif %}
+
+                <!-- Product image -->
+                {% if product.image %}
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" />
+                {% else %}
+                    <img class="card-img-top" src="{% static 'assets/online-shopping.png' %}" alt="No image available" />
+                {% endif %}
+
+                <!-- Product details -->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+
+                        {% if product.on_sale %}
+                            <strike>${{ product.price }}</strike> &nbsp; {{ product.sale_price }}
+                        {% else %}
+                            ${{ product.price }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Product actions -->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    {% if product.id %}
+                        <div class="text-center">
+                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product_details' product.id %}">
+                                View Product
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-danger">Invalid product</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No products found.</p>
+{% endif %}
+
+
+            </div>
+        </center>
+
+    </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
