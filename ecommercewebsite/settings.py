@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # Your custom app
     'shopapp',
     'cart',
+    'payment',
 ]
 
 MIDDLEWARE = [

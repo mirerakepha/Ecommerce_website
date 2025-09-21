@@ -1,7 +1,6 @@
 
 
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 
         <!-- Header-->
@@ -33,58 +32,63 @@
                       </div>
 
                     </div>
+
+
+
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 {% if searched %}
-    {% for product in searched %}
-        <div class="col mb-5">
-            <div class="card h-100">
-
-                {% if product.on_sale %}
-                    <!-- SALE badge -->
-                    <div class="badge text-white position-absolute" style="background-color: orange; top: 0.5rem; right: 0.5rem">
-                        SALE
-                    </div>
-                {% endif %}
-
-                <!-- Product image -->
-                {% if product.image %}
-                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" />
-                {% else %}
-                    <img class="card-img-top" src="{% static 'assets/online-shopping.png' %}" alt="No image available" />
-                {% endif %}
-
-                <!-- Product details -->
-                <div class="card-body p-4">
-                    <div class="text-center">
-                        <h5 class="fw-bolder">{{ product.name }}</h5>
-
+                    {% for product in searched %}
                         {% if product.on_sale %}
-                            <strike>${{ product.price }}</strike> &nbsp; {{ product.sale_price }}
-                        {% else %}
-                            ${{ product.price }}
-                        {% endif %}
-                    </div>
-                </div>
+                        <div class="col mb-5">
+                        <div class="card h-100">
+                            <!--badge-->
+                            <div class="badge text-white position-absolute" style="background-color: orange; top: 0.5rem; right: 0.5rem">SALE</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <!-- Product price-->
+                                    <strike>${{ product.price }}</strike>
+                                    &nbsp;<!--adds a litte space between-->
+                                    {{ product.sale_price }}
 
-                <!-- Product actions -->
-                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                    {% if product.id %}
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product_details' product.id %}">
-                                View Product
-                            </a>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product_details' product.id %}">View Product</a></div>
+                            </div>
                         </div>
-                    {% else %}
-                        <div class="text-center text-danger">Invalid product</div>
-                    {% endif %}
-                </div>
+                    </div>
+                        {% else %}
+                    <!--product 1-->
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <!-- Product price-->
+                                    ${{ product.price }}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product_details' product.id %}">View Product</a></div>
+                            </div>
+                        </div>
+                    </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>No products found.</p>
-{% endif %}
-
-
+                <br><br><br><br><br><br><br><br><br><br><br><br>
             </div>
         </center>
 

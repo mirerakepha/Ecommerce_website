@@ -9,7 +9,11 @@ from .models import Profile, Product, Category, Customer
 from .forms import UserForm, ProfileForm, SignupForm, LoginForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-
+from django.db.models import Q #query multiple items using filter
+import json
+from cart.cart import Cart
+from payment.forms import ShippingForm
+from payment.models import ShippingAddress
 
 def home(request):
     products = Product.objects.all()
@@ -17,17 +21,15 @@ def home(request):
 
 def search(request):
     if request.method == "POST":
-        searched = request.POST.get('searched', '').strip()
-        if searched:
-            results = Product.objects.filter(name__icontains=searched)
-            if results.exists():
-                return render(request, 'search.html', {'results': results, 'searched': searched})
-            else:
-                messages.error(request, 'Product not found.')
-                return render(request, 'search.html', {'results': [], 'searched': searched})
+        searched = request.POST["searched"]
+        #query the database
+        searched = Product.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
+        #test for null
+        if not searched:
+            messages.success(request, "Product not found")
+            return render(request, "search.html")
         else:
-            messages.warning(request, "Please enter a search term.")
-            return render(request, 'search.html', {})
+            return render(request, "search.html", {'searched': searched})
     else:
         return render(request, 'search.html', {})
 
@@ -59,6 +61,20 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            #here pull the cart items from the DB  since one needs their items when logged back in
+            current_user = Profile.objects.get(user__id=user.id)
+            #get the saved cart from db
+            saved_cart = current_user.old_cart
+            #convert python string back to dictionary
+            if saved_cart:
+                #convert to dictionary using JSON
+                converted_cart = json.loads(saved_cart)
+                #add the loaded cart dictionary to out our session and get the cart
+                cart = Cart(request=request)
+                for key,value in converted_cart.items():
+                    cart.db_add(product=key, quantity=value)
+
+
             messages.success(request, "You are now logged in.")
             return redirect('home')
         else:
@@ -90,27 +106,29 @@ def update_user(request):
         return redirect('login')
 
 
-
-
-
 @login_required
 def update_info(request):
     # Ensure profile exists
     current_user, created = Profile.objects.get_or_create(user=request.user)
 
+    # Ensure shipping address exists
+    shipping_user, created = ShippingAddress.objects.get_or_create(user=request.user)
+
+    # Bind forms
+    form = UserInfoForm(request.POST or None, request.FILES or None, instance=current_user)
+    shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
+
     if request.method == "POST":
-        form = UserInfoForm(request.POST, request.FILES, instance=current_user)
-        if form.is_valid():
+        if form.is_valid() and shipping_form.is_valid():
             form.save()
+            shipping_form.save()
             messages.success(request, "Your Info has been updated.")
             return redirect('home')
-    else:
-        form = UserInfoForm(instance=current_user)
 
-    return render(request, 'update_info.html', {'form': form})
-
-
-
+    return render(request, 'update_info.html', {
+        'form': form,
+        'shipping_form': shipping_form,
+    })
 
 
 @login_required
