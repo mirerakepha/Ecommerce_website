@@ -132,11 +132,6 @@ def update_info(request):
 
 
 @login_required
-def checkout(request):
-    return render(request, 'checkout.html')
-
-
-@login_required
 def notifications(request):
     return render(request, 'notifications.html')
 
