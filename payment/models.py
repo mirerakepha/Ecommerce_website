@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
 from shopapp.models import Product
+from django.db.models.signals import post_save
+
+
+
 
 class ShippingAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -22,11 +26,20 @@ class ShippingAddress(models.Model):
     def __str__(self):
         return f'Shipping Address {str(self.id)}'
 
+#create a shipping address
+def create_shipping(sender, instance, created, **kwargs):
+    if created:
+        user_shipping = ShippingAddress(user=instance)
+        user_shipping.save()
+
+post_save.connect(create_shipping, sender=User)
+
+
 
 #order model
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    fullname = models.CharField(max_length=100)
+    fullname = models.CharField(max_length=100, null=True, blank=False)
     email = models.EmailField(max_length=100, null=True, blank=True)
     shipping_address = models.TextField(max_length=15000, null=True, blank=True)
     amount_paid = models.DecimalField(decimal_places=2, max_digits=20)
