@@ -1,12 +1,14 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import render, redirect
 
 from cart import models
 from cart.cart import Cart
-from shopapp.models import Product
+from shopapp.models import Product, Profile
 from payment.forms import ShippingForm, PaymentForm
 from payment.models import ShippingAddress, Order, OrderItem
 from django.contrib.auth.models import User
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 # Create your views here.
@@ -161,6 +163,19 @@ def process_order(request):
                     )
                     create_order_item.save()
 
+            #delete/empty cart items after order has been processed->deleting the session # in carts.py its called the session_key
+            if 'session_key' in request.session:
+                del request.session['session_key']
+                request.session.modified = True
+
+            #delete cart from the database after processing orders(old cart)
+            if request.user.is_authenticated:
+                profile = Profile.objects.filter(user=request.user).first()
+                if profile:
+                    profile.old_cart = ""  # empty cart in db
+                    profile.save()
+
+
             messages.success(request, "Order created successfully!")
             return redirect('home')
 
@@ -176,3 +191,58 @@ def process_order(request):
 
 def payment_success(request):
     return render(request, 'payment_success.html')
+
+
+@login_required
+def shipped_dash(request):
+    if not request.user.is_superuser:
+        messages.error(request, 'Access Denied.')
+        return redirect('home')
+
+    if request.method == "POST":
+        order_id = request.POST.get("num")
+        Order.objects.filter(id=order_id).update(shipped=False)
+        messages.success(request, f"Order #{order_id} marked as NOT shipped.")
+        return redirect("shipped_dash")
+
+    orders = Order.objects.filter(shipped=True)
+    return render(request, 'shipped_dash.html', {'orders': orders})
+
+
+@login_required
+def not_shipped_dash(request):
+    if not request.user.is_superuser:
+        messages.error(request, 'Access Denied.')
+        return redirect('home')
+
+    if request.method == "POST":
+        order_id = request.POST.get("num")
+        Order.objects.filter(id=order_id).update(shipped=True)
+        messages.success(request, f"Order #{order_id} marked as shipped.")
+        return redirect("not_shipped_dash")
+
+    orders = Order.objects.filter(shipped=False)
+    return render(request, 'not_shipped_dash.html', {'orders': orders})
+
+
+@login_required
+def orders(request, pk):
+    if not request.user.is_superuser:
+        messages.error(request, 'Access Denied.')
+        return redirect('home')
+
+    order = Order.objects.get(id=pk)
+    items = order.items.all()
+
+    if request.method == "POST":
+        status = request.POST.get('shipping_status')
+        order.shipped = (status == "true")
+        order.save()#save shipping status
+        messages.success(request, "Shipping status updated!")
+
+        if order.shipped:
+            return redirect('shipped_dash')
+        else:
+            return redirect('not_shipped_dash')
+
+    return render(request, 'orders.html', {"order": order, "items": items})
